@@ -1,0 +1,140 @@
+<!doctype html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tabela Periódica — Simples</title>
+  <style>
+    :root{--gap:6px;--cell-w:72px;--cell-h:72px;--bg:#0f1724;--card:#0b1220;--accent:#60a5fa}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef8;background:linear-gradient(180deg,#071022 0%,#0b1220 100%);}
+    .wrap{max-width:1100px;margin:28px auto;padding:18px}
+    h1{font-size:20px;margin:0 0 12px;color:var(--accent)}/* grid container that imitates the periodic table layout (first 18 columns wide) */
+.ptable{display:grid;grid-template-columns:repeat(18, var(--cell-w));grid-auto-rows:var(--cell-h);gap:var(--gap)}
+
+.cell{background:linear-gradient(180deg,#0c1726,#071020);border-radius:6px;display:flex;flex-direction:column;justify-content:space-between;padding:6px;box-shadow:0 6px 18px rgba(2,6,23,.6);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.cell:hover{transform:translateY(-6px);box-shadow:0 18px 34px rgba(2,6,23,.65)}
+.num{font-size:11px;opacity:.8}
+.sym{font-size:20px;font-weight:700}
+.name{font-size:11px;opacity:.9}
+
+/* empty placeholder to position gaps */
+.gap{background:transparent;box-shadow:none;cursor:default}
+
+/* highlight categories (very simple coloring) */
+.alkali{border:2px solid rgba(255,120,120,.08)}
+.alkaline{border:2px solid rgba(120,200,255,.06)}
+.transition{border:2px solid rgba(180,160,255,.06)}
+.metalloid{border:2px solid rgba(120,255,160,.06)}
+.nonmetal{border:2px solid rgba(255,220,120,.06)}
+
+/* info panel */
+.info{margin-top:16px;background:linear-gradient(180deg,#061020,#071423);padding:12px;border-radius:8px;box-shadow:0 10px 24px rgba(2,6,23,.6)}
+.info h2{margin:0 0 6px;color:var(--accent);font-size:16px}
+.info p{margin:6px 0;font-size:13px}
+
+/* responsive */
+@media (max-width:900px){:root{--cell-w:56px;--cell-h:56px} .wrap{padding:10px}}
+@media (max-width:480px){.ptable{grid-template-columns:repeat(9,var(--cell-w))}}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Tabela Periódica — versão simples</h1><div class="ptable" id="ptable">
+  <!-- Linha 1 -->
+  <div class="cell gap" style="grid-column:1/2"></div>
+  <div class="cell gap" style="grid-column:2/17"></div>
+  <div class="cell" style="grid-column:1/2"></div>
+
+  <!-- We'll place actual elements using JS for clarity -->
+</div>
+
+<div class="info" id="info">
+  <h2>Clique em um elemento</h2>
+  <p id="infotxt">Selecione um elemento na tabela para ver detalhes aqui. Esta é uma tabela extremamente simples com apenas informação básica: número atômico, símbolo e nome.</p>
+</div>
+
+  </div>  <script>
+    // Dados reduzidos — exemplo com os 36 primeiros elementos
+    const elements = [
+      {z:1,s:'H',n:'Hidrogênio',cat:'nonmetal',pos:{r:1,c:1}},
+      {z:2,s:'He',n:'Hélio',cat:'nonmetal',pos:{r:1,c:18}},
+
+      {z:3,s:'Li',n:'Lítio',cat:'alkali',pos:{r:2,c:1}},
+      {z:4,s:'Be',n:'Berílio',cat:'alkaline',pos:{r:2,c:2}},
+      {z:5,s:'B',n:'Boro',cat:'metalloid',pos:{r:2,c:13}},
+      {z:6,s:'C',n:'Carbono',cat:'nonmetal',pos:{r:2,c:14}},
+      {z:7,s:'N',n:'Nitrogênio',cat:'nonmetal',pos:{r:2,c:15}},
+      {z:8,s:'O',n:'Oxigênio',cat:'nonmetal',pos:{r:2,c:16}},
+      {z:9,s:'F',n:'Flúor',cat:'nonmetal',pos:{r:2,c:17}},
+      {z:10,s:'Ne',n:'Neônio',cat:'nonmetal',pos:{r:2,c:18}},
+
+      {z:11,s:'Na',n:'Sódio',cat:'alkali',pos:{r:3,c:1}},
+      {z:12,s:'Mg',n:'Magnésio',cat:'alkaline',pos:{r:3,c:2}},
+      {z:13,s:'Al',n:'Alumínio',cat:'transition',pos:{r:3,c:13}},
+      {z:14,s:'Si',n:'Silício',cat:'metalloid',pos:{r:3,c:14}},
+      {z:15,s:'P',n:'Fósforo',cat:'nonmetal',pos:{r:3,c:15}},
+      {z:16,s:'S',n:'Enxofre',cat:'nonmetal',pos:{r:3,c:16}},
+      {z:17,s:'Cl',n:'Cloro',cat:'nonmetal',pos:{r:3,c:17}},
+      {z:18,s:'Ar',n:'Argônio',cat:'nonmetal',pos:{r:3,c:18}},
+
+      {z:19,s:'K',n:'Potássio',cat:'alkali',pos:{r:4,c:1}},
+      {z:20,s:'Ca',n:'Cálcio',cat:'alkaline',pos:{r:4,c:2}},
+      {z:21,s:'Sc',n:'Escândio',cat:'transition',pos:{r:4,c:3}},
+      {z:22,s:'Ti',n:'Titânio',cat:'transition',pos:{r:4,c:4}},
+      {z:23,s:'V',n:'Vanádio',cat:'transition',pos:{r:4,c:5}},
+      {z:24,s:'Cr',n:'Cromo',cat:'transition',pos:{r:4,c:6}},
+      {z:25,s:'Mn',n:'Manganês',cat:'transition',pos:{r:4,c:7}},
+      {z:26,s:'Fe',n:'Ferro',cat:'transition',pos:{r:4,c:8}},
+      {z:27,s:'Co',n:'Cobalto',cat:'transition',pos:{r:4,c:9}},
+      {z:28,s:'Ni',n:'Níquel',cat:'transition',pos:{r:4,c:10}},
+      {z:29,s:'Cu',n:'Cobre',cat:'transition',pos:{r:4,c:11}},
+      {z:30,s:'Zn',n:'Zinco',cat:'transition',pos:{r:4,c:12}},
+      {z:31,s:'Ga',n:'Gálio',cat:'transition',pos:{r:4,c:13}},
+      {z:32,s:'Ge',n:'Germânio',cat:'metalloid',pos:{r:4,c:14}},
+      {z:33,s:'As',n:'Arsênio',cat:'metalloid',pos:{r:4,c:15}},
+      {z:34,s:'Se',n:'Selênio',cat:'nonmetal',pos:{r:4,c:16}},
+      {z:35,s:'Br',n:'Bromo',cat:'nonmetal',pos:{r:4,c:17}},
+      {z:36,s:'Kr',n:'Criptônio',cat:'nonmetal',pos:{r:4,c:18}},
+    ];
+
+    const ptable = document.getElementById('ptable');
+
+    // Build a full 4x18 grid of placeholders for consistent layout
+    const totalRows = 7; // we only need first 4 rows to show main table; keeping more space for future use
+    for(let r=1;r<=totalRows;r++){
+      for(let c=1;c<=18;c++){
+        const placeholder = document.createElement('div');
+        placeholder.className = 'cell gap';
+        placeholder.dataset.row = r; placeholder.dataset.col = c;
+        ptable.appendChild(placeholder);
+      }
+    }
+
+    // Helper to convert grid position to index in grid children: (r-1)*18 + (c-1)
+    function cellIndex(r,c){return (r-1)*18 + (c-1);} 
+
+    // Place elements
+    elements.forEach(el=>{
+      const idx = cellIndex(el.pos.r, el.pos.c);
+      const placeholder = ptable.children[idx];
+      if(!placeholder) return; // out of range guard
+
+      // replace placeholder with real element node
+      const node = document.createElement('div');
+      node.className = 'cell ' + el.cat;
+      node.innerHTML = `<div class="num">${el.z}</div><div style="text-align:center"><div class="sym">${el.s}</div><div class="name">${el.n}</div></div>`;
+      node.onclick = ()=>showInfo(el);
+      ptable.replaceChild(node, placeholder);
+    });
+
+    // Info panel update
+    function showInfo(el){
+      document.getElementById('infotxt').innerHTML = `<strong>${el.s} — ${el.n}</strong><br/>Número atômico: ${el.z}<br/>Categoria: ${el.cat}`;
+    }
+
+    // Optional: pre-select hidrogênio
+    showInfo(elements[0]);
+  </script></body>
+</html>
