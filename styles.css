@@ -1,0 +1,48 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #f0f0f0;
+  padding: 30px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+#somadores-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.somador {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+}
+
+.somador input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.somador button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.resultado {
+  margin-top: 10px;
+  font-weight: bold;
+}
